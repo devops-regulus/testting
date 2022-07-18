@@ -5,9 +5,8 @@ pipeline {
 
         text(name: 'BIOGRAPHY', defaultValue: '', description: 'Enter some information about the person')
 
-        booleanParam(name: 'TOGGLE', defaultValue: true, description: 'Toggle this value',
-                    name: 'TOGGLE2', defaultValue: true,
-                     name: 'TOGGLE3', defaultValue: true)
+        string(name: 'servers', defaultValue: 'server2 server2', description: 'Separate server name by space')
+  booleanParam(name: 'copyToServers', defaultValue: false, description: 'whether to copy the builds to the servers. Skip this step when you are not on network')
 
         choice(name: 'CHOICE', choices: ['One', 'Two', 'Three'], description: 'Pick something')
 
