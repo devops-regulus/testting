@@ -12,12 +12,12 @@ pipeline {
         password(name: 'PASSWORD', defaultValue: 'SECRET', description: 'Enter a password')
     }
     stages {
-        stage('Example') 
-          when {
+        stage('Example') {
+                    when {
               allOf {
                   expression { params.namespace == 'staging' }
               }
-          }{
+          }
             steps {
                 echo "Hello ${params.PERSON}"
 
