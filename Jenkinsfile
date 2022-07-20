@@ -1,12 +1,11 @@
 pipeline {
     agent any
     parameters {
-        string(name: 'PERSON', defaultValue: 'Mr Jenkins', description: 'Who should I say hello to?')
 
         text(name: 'BIOGRAPHY', defaultValue: '', description: 'Enter some information about the person')
 
         string(name: 'servers', defaultValue: 'server2 server2', description: 'Separate server name by space')
-  booleanParam(name: 'copyToServers', defaultValue: false, description: 'whether to copy the builds to the servers. Skip this step when you are not on network')
+         booleanParam(name: 'copyToServers', defaultValue: false, description: 'whether to copy the builds to the servers. Skip this step when you are not on network')
 
         choice(name: 'CHOICE', choices: ['One', 'Two', 'Three'], description: 'Pick something')
 
@@ -26,7 +25,19 @@ pipeline {
                 echo "Password: ${params.PASSWORD}"
             }
         }
+        
+                stage('test') {
+                    when {
+              allOf {
+                  expression { params.namespace == 'staging' }
+              }
+          }
+            steps {
+                echo 'Hello World'
+            }
+        }
     }
+    
     post {
         always {
             echo 'This will always run'
