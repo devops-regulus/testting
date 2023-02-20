@@ -6,7 +6,7 @@ pipeline {
 
         choice(
                 choices: ['CheckoutSCM','rebuild'],
-                description: '\n dev - its deploy from 143.198.164.231 ',
+                description: '\n rebuild - its deploy from 143.198.164.231 ',
                 name: 'namespace'
         )
     }
