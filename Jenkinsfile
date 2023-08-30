@@ -1,7 +1,11 @@
 pipeline {
     agent any
     parameters {
-
+        choice(
+            choices: ['staging','pre_productions'],
+            description: '\n dev - its deploy from 161.35.100.107 ',
+            name: 'namespace'
+        )
         text(name: 'BIOGRAPHY', defaultValue: '', description: 'Enter some information about the person')
 
         string(name: 'servers', defaultValue: 'server2 server2', description: 'Separate server name by space')
