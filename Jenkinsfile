@@ -30,6 +30,36 @@ pipeline {
                 echo "Password: ${params.PASSWORD}"
             }
         }
+        stage("Deploy to preprod with changes") {
+    when {
+        expression { params.namespace == 'pre_productions' }
+    }
+    steps {
+        script {
+            echo "----------Start build---------"
+            def userInput = input(
+                id: 'deployConfirmation',
+                message: 'Do you want to proceed with the build?',
+                parameters: [
+                    [$class: 'BooleanParameterDefinition', defaultValue: false, description: 'Proceed?', name: 'confirm']
+                ]
+            )
+            if (userInput.confirm) {
+                sh '''
+                    ssh -i /var/lib/jenkins/.ssh/id_rsa dudka@161.35.100.107 "ls"
+                '''
+                echo "----------check git branch---------"
+                sh '''
+                    ssh -i /var/lib/jenkins/.ssh/id_rsa dudka@161.35.100.107 "ls"
+                '''
+                echo "----------End build---------"
+            } else {
+                echo "Build canceled."
+            }
+        }
+    }
+}
+
         
                 stage('test') {
                     when {
