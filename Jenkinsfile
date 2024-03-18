@@ -4,38 +4,38 @@ pipeline {
     parameters {
         choice(
             choices: ['CheckoutSCM', 'test_server'],
-            description: '\n test_server - its deploy from 95.217.232.79',
+            description: '\n test_server - развернуть с 95.217.232.79',
             name: 'namespace'
         )
         booleanParam(
             defaultValue: false,
-            description: 'Enable custom command execution',
+            description: 'Включить выполнение пользовательской команды',
             name: 'enableCustomCommand'
         )
         string(
             defaultValue: '',
-            description: 'Custom command to execute (if enabled)',
+            description: 'Пользовательская команда для выполнения (если включено)',
             name: 'customCommand'
         )
     }
 
     stages {
-        stage("Deploy test_server with changes") {
+        stage("Развернуть test_server с изменениями") {
             when {
                 expression { params.namespace == 'test_server' }
             }
             steps {
                 script {
-                    echo "----------Start build---------"
+                    echo "----------Начать сборку---------"
                     deployTestServer()
-                    echo "----------check git branch---------"
+                    echo "----------Проверить ветку git---------"
                     checkGitBranch()
-                    echo "----------End build---------"
+                    echo "----------Завершить сборку---------"
                 }
             }
         }
 
-        stage('Checkout SCM') {
+        stage('Проверка SCM') {
             when {
                 expression { params.namespace == 'CheckoutSCM' }
             }
@@ -46,19 +46,19 @@ pipeline {
             }
         }
 
-        stage('Execute Custom Command') {
+        stage('Выполнить пользовательскую команду') {
             when {
                 expression { params.enableCustomCommand && params.namespace == 'test_server' }
             }
             steps {
                 script {
-                    echo "Executing custom command: ${params.customCommand}"
+                    echo "Выполнение пользовательской команды: ${params.customCommand}"
                     sh "${params.customCommand}"
                 }
             }
         }
 
-        stage('Restart Services') {
+        stage('Перезапуск сервисов') {
             when {
                 expression { params.restartGunicorn }
             }
@@ -68,24 +68,25 @@ pipeline {
                 }
             }
         }
-        post {
+    }
+
+    post {
         always {
-            echo 'This will always run'
+            echo 'Это всегда будет выполняться'
         }
         success {
-            echo 'This will run only if successful'
+            echo 'Это будет выполняться только при успешном выполнении'
         }
         failure {
-            echo 'This will run only if failed'
+            echo 'Это будет выполняться только при ошибке'
         }
         unstable {
-            echo 'This will run only if the run was marked as unstable'
+            echo 'Это будет выполняться только если выполнение было помечено как нестабильное'
         }
         changed {
-            echo 'This will run only if the state of the Pipeline has changed'
-            echo 'For example, if the Pipeline was previously failing but is now successful'
+            echo 'Это будет выполняться только если состояние конвейера изменилось'
+            echo 'Например, если конвейер ранее завершался с ошибкой, но сейчас успешно'
         }
-    }
     }
 }
 
@@ -98,10 +99,11 @@ def checkGitBranch() {
 }
 
 def sshCommand(command) {
+    println "Выполнение SSH команды: ${command}"
     sh "ssh -i /var/jenkins_home/.ssh/id_rsa -p 48999 root@95.217.232.79 '${command}'"
 }
 
 def restartServices() {
-    echo "Restarting Gunicorn..."
+    println "Перезапуск Gunicorn..."
     sshCommand("systemctl restart byme")
 }
