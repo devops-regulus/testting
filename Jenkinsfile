@@ -5,7 +5,8 @@ pipeline {
         choice(
             choices: ['CheckoutSCM', 'test_server'],
             description: '\n test_server - розгорнути з 95.217.232.79',
-            name: 'namespace'
+            name: 'namespace',
+            defaultValue: 'test_server'
         )
         booleanParam(
             defaultValue: false,
