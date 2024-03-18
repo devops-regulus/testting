@@ -4,61 +4,61 @@ pipeline {
     parameters {
         choice(
             choices: ['CheckoutSCM', 'test_server'],
-            description: '\n test_server - развернуть с 95.217.232.79',
+            description: '\n test_server - розгорнути з 95.217.232.79',
             name: 'namespace'
         )
         booleanParam(
             defaultValue: false,
-            description: 'Включить выполнение пользовательской команды',
+            description: 'Увімкнути виконання користувацької команди',
             name: 'enableCustomCommand'
         )
         string(
             defaultValue: '',
-            description: 'Пользовательская команда для выполнения (если включено)',
+            description: 'Користувацька команда для виконання (якщо увімкнено)',
             name: 'customCommand'
         )
     }
 
     stages {
-        stage("Развернуть test_server с изменениями") {
+        stage("Розгорнути test_server зі змінами") {
             when {
                 expression { params.namespace == 'test_server' }
             }
             steps {
                 script {
-                    echo "----------Начать сборку---------"
+                    echo "\033[34m----------Почати збірку---------"
                     deployTestServer()
-                    echo "----------Проверить ветку git---------"
+                    echo "----------Перевірити гілку git---------"
                     checkGitBranch()
-                    echo "----------Завершить сборку---------"
+                    echo "----------Завершити збірку---------\033[0m"
                 }
             }
         }
 
-        stage('Проверка SCM') {
+        stage('Перевірка SCM') {
             when {
                 expression { params.namespace == 'CheckoutSCM' }
             }
             steps {
                 script {
-                    echo 'CheckoutSCM'
+                    echo '\033[34mCheckoutSCM\033[0m'
                 }
             }
         }
 
-        stage('Выполнить пользовательскую команду') {
+        stage('Виконати користувацьку команду') {
             when {
                 expression { params.enableCustomCommand && params.namespace == 'test_server' }
             }
             steps {
                 script {
-                    echo "Выполнение пользовательской команды: ${params.customCommand}"
+                    echo "\033[34mВиконання користувацької команди: ${params.customCommand}\033[0m"
                     sh "${params.customCommand}"
                 }
             }
         }
 
-        stage('Перезапуск сервисов') {
+        stage('Перезапуск сервісів') {
             when {
                 expression { params.restartGunicorn }
             }
@@ -72,20 +72,20 @@ pipeline {
 
     post {
         always {
-            echo 'Это всегда будет выполняться'
+            echo '\033[34mЦе завжди буде виконуватися\033[0m'
         }
         success {
-            echo 'Это будет выполняться только при успешном выполнении'
+            echo '\033[34mЦе буде виконуватися лише при успішному виконанні\033[0m'
         }
         failure {
-            echo 'Это будет выполняться только при ошибке'
+            echo '\033[34mЦе буде виконуватися лише при помилці\033[0m'
         }
         unstable {
-            echo 'Это будет выполняться только если выполнение было помечено как нестабильное'
+            echo '\033[34mЦе буде виконуватися лише якщо виконання було позначено як нестабільне\033[0m'
         }
         changed {
-            echo 'Это будет выполняться только если состояние конвейера изменилось'
-            echo 'Например, если конвейер ранее завершался с ошибкой, но сейчас успешно'
+            echo '\033[34mЦе буде виконуватися лише якщо стан конвеєра змінився\033[0m'
+            echo '\033[34mНаприклад, якщо конвеєр раніше завершувався з помилкою, а тепер успішно\033[0m'
         }
     }
 }
@@ -99,11 +99,11 @@ def checkGitBranch() {
 }
 
 def sshCommand(command) {
-    println "Выполнение SSH команды: ${command}"
+    println "\033[34mВиконання SSH команди: ${command}\033[0m"
     sh "ssh -i /var/jenkins_home/.ssh/id_rsa -p 48999 root@95.217.232.79 '${command}'"
 }
 
 def restartServices() {
-    println "Перезапуск Gunicorn..."
+    println "\033[34mПерезапуск Gunicorn...\033[0m"
     sshCommand("systemctl restart byme")
 }
